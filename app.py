@@ -16,8 +16,9 @@ if st.button("Generate Video"):
         with st.spinner("AI Video Engine processing... Please wait 1-2 minutes."):
             try:
                 client = replicate.Client(api_token=token.strip())
+                # වෙනත් ස්ථාවර Model path එකක් භාවිත කිරීම
                 output = client.run(
-                    "wan-video/wan-2.1-t2v-14b",
+                    "minimax/video-01",
                     input={"prompt": prompt}
                 )
                 st.success("Video Generated Successfully!")
