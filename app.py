@@ -16,12 +16,15 @@ if st.button("Generate Video"):
         with st.spinner("AI Video Engine processing... Please wait 1-2 minutes."):
             try:
                 client = replicate.Client(api_token=token.strip())
-                # වෙනත් ස්ථාවර Model path එකක් භාවිත කිරීම
                 output = client.run(
                     "minimax/video-01",
                     input={"prompt": prompt}
                 )
                 st.success("Video Generated Successfully!")
-                st.video(output)
+                
+                # Output එක URL එකක් නම් හෝ FileOutput නම් string එකට හරවා Display කිරීම
+                video_url = str(output)
+                st.video(video_url)
+                
             except Exception as e:
                 st.error(f"Error Details: {e}")
