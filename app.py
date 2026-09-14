@@ -6,19 +6,27 @@ st.set_page_config(page_title="Sri Lanka AI Garage", page_icon="🚗")
 
 st.title("🚗 Sri Lanka AI Garage Video Studio")
 
-# Check API Token from Streamlit Secrets or User Input
-api_key = st.secrets.get("REPLICATE_API_TOKEN") if "REPLICATE_API_TOKEN" in st.secrets else st.text_input("Enter Replicate API Key:", type="password")
+# Secret එක හරියටම Environment variable එකට set කිරීම
+if "REPLICATE_API_TOKEN" in st.secrets:
+    os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
+    api_key = st.secrets["REPLICATE_API_TOKEN"]
+else:
+    api_key = st.text_input("Enter Replicate API Key:", type="password")
+    if api_key:
+        os.environ["REPLICATE_API_TOKEN"] = api_key
 
 prompt = st.text_area("Video Prompt:", "A black modified Toyota Land Cruiser V8 driving in Sri Lanka, cinematic 4k")
 
 if st.button("Generate Video"):
-    if not api_key:
-        st.error("Please enter or configure your Replicate API key first!")
+    if not os.environ.get("REPLICATE_API_TOKEN"):
+        st.error("Replicate API Key එක සෙට් වී නැත! කරුණාකර Secrets පරීක්ෂා කරන්න.")
     else:
-        os.environ["REPLICATE_API_TOKEN"] = api_key
         with st.spinner("AI Video Engine processing... Please wait 1-2 minutes."):
             try:
-                output = replicate.run(
+                # Replicate Client එක කෙළින්ම API Token එක සමඟ Initialize කිරීම
+                client = replicate.Client(api_token=os.environ["REPLICATE_API_TOKEN"])
+                
+                output = client.run(
                     "wan-video/wan-2.1-t2v-14b",
                     input={"prompt": prompt}
                 )
