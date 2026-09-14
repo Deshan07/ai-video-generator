@@ -11,12 +11,11 @@ prompt = st.text_area("Video Prompt:", "A black modified Toyota Land Cruiser V8 
 
 if st.button("Generate Video"):
     if not token:
-        st.error("Secrets වල REPLICATE_API_TOKEN එක හමු වුණේ නැත!")
+        st.error("REPLICATE_API_TOKEN not found in Streamlit Secrets!")
     else:
         with st.spinner("AI Video Engine processing... Please wait 1-2 minutes."):
             try:
                 client = replicate.Client(api_token=token.strip())
-                # නිවැරදි Wan2.1 text-to-video model path එක
                 output = client.run(
                     "wan-video/wan-2.1-t2v-14b",
                     input={"prompt": prompt}
